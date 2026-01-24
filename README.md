@@ -37,7 +37,7 @@ composer install
 ```bash
 cp .env.example .env
 ```
-Edita `.env` y ajusta las credenciales de tu DB y las llaves de Bitfinex proporcionadas en la prueba.
+Edita `.env` y ajusta las credenciales de tu DB y las llaves de Bitfinex.
 
 4. Genera la clave de aplicación:
 ```bash
