@@ -36,7 +36,7 @@ public function sync()
         $ignoredCount = 0;
 
         foreach ($externalOrders as $orderData) {
-            // Verificamos que sea un array de orden válido y el ID sea numérico
+        
             if (!isset($orderData[0]) || !is_numeric($orderData[0])) continue;
 
             $bitfinexId = $orderData[0];
