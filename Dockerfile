@@ -26,6 +26,10 @@ WORKDIR /var/www/html
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 
+RUN chmod -R 775 storage bootstrap/cache
+
+CMD php artisan migrate --force && apache2-foreground
+
 # Ajustar permisos para Laravel
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
