@@ -53,27 +53,55 @@
     </div>
 
     <!-- Modal -->
-    <div id="editModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-        <div class="modal-box">
-            <h3 class="text-xl font-bold mb-4 text-gray-800">Editar Orden</h3>
+<div id="editModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+    <div class="modal-box bg-white p-6 rounded-xl shadow-2xl w-full max-w-md">
+        <h3 id="modalTitle" class="text-xl font-bold mb-4 text-gray-800">Editar Orden</h3>
 
-            <input type="hidden" id="editId">
+        <input type="hidden" id="editId">
 
+        <div id="editFields">
             <label class="block text-gray-700 mb-1">Precio</label>
-            <input type="number" id="editPrice" step="0.01">
+            <input type="number" id="editPrice" step="0.01" class="w-full border p-2 rounded mb-3">
 
             <label class="block text-gray-700 mb-1">Cantidad</label>
-            <input type="number" id="editAmount" step="0.00001">
+            <input type="number" id="editAmount" step="0.00001" class="w-full border p-2 rounded mb-3">
 
             <label class="block text-gray-700 mb-1">Estado</label>
-            <input type="text" id="editStatus">
+            <input type="text" id="editStatus" class="w-full border p-2 rounded mb-3">
+        </div>
 
-            <div class="flex justify-end gap-2 mt-4">
-                <button onclick="closeModal()" class="btn-gray">Cancelar</button>
-                <button onclick="updateOrder()" class="btn-green">Guardar</button>
+        <div id="fullDetails" class="mt-6 pt-4 border-t border-gray-200 hidden">
+            <h4 class="text-xs font-bold text-blue-500 uppercase mb-3 tracking-wider">Metadatos del Sistema</h4>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                    <p class="text-gray-400 text-xs">ID Interno (DB)</p>
+                    <p id="viewId" class="font-mono font-bold text-gray-700"></p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-xs">Tipo de Orden</p>
+                    <p id="viewType" class="font-semibold text-gray-700"></p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-xs">Creado en Bitfinex</p>
+                    <p id="viewMtsCreate" class="text-gray-700"></p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-xs">Sincronizado</p>
+                    <p id="viewCreatedAt" class="text-gray-700"></p>
+                </div>
+                <div class="col-span-2">
+                    <p class="text-gray-400 text-xs">Última actualización local</p>
+                    <p id="viewUpdatedAt" class="text-gray-700"></p>
+                </div>
             </div>
         </div>
+
+        <div class="flex justify-end gap-2 mt-6">
+            <button onclick="closeModal()" class="btn-gray px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition">Cerrar</button>
+            <button onclick="updateOrder()" class="btn-green px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">Guardar</button>
+        </div>
     </div>
+</div>
 
     <script src="{{ asset('js/orders.js') }}"></script>
 </body>
