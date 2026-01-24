@@ -1,0 +1,76 @@
+        /* Botones tipo enlace */
+.link-blue {
+    color: #2563eb; /* azul */
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.link-blue:hover {
+    color: #1d4ed8;
+}
+
+.link-red {
+    color: #dc2626; /* rojo */
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.link-red:hover {
+    color: #b91c1c;
+}
+
+        /* Glassmorphism Modal */
+        .modal-box {
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            padding: 24px;
+            max-width: 28rem;
+            margin: 6rem auto;
+        }
+
+        /* Inputs */
+        .modal-box input {
+            width: 100%;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 0.75rem;
+            background: #e5e7eb;
+            margin-bottom: 12px;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.05),
+                        inset -2px -2px 5px rgba(255,255,255,0.7);
+            font-size: 0.95rem;
+        }
+
+        /* Botones */
+        .btn-gray {
+            background: #f9fafb;
+            color: #374151;
+            padding: 8px 16px;
+            border-radius: 0.75rem;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.05),
+                        -2px -2px 5px rgba(255,255,255,0.7);
+            transition: all 0.2s;
+        }
+        .btn-gray:hover {
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.1),
+                        -1px -1px 3px rgba(255,255,255,0.8);
+            transform: translateY(-1px);
+        }
+        .btn-green {
+            background: #22c55e;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 10px rgba(34,197,94,0.3);
+            transition: all 0.2s;
+        }
+        .btn-green:hover {
+            background: #16a34a;
+            box-shadow: 0 6px 12px rgba(22,163,74,0.4);
+            transform: translateY(-1px);
+        }
