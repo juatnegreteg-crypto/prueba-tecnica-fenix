@@ -1,5 +1,5 @@
 # Usamos una imagen oficial de PHP con Apache
-FROM php:8.2-apache
+FROM php:8.4-apache
 
 # Instalar extensiones necesarias para Laravel y SQLite
 RUN apt-get update && apt-get install -y \
@@ -24,7 +24,7 @@ WORKDIR /var/www/html
 
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 
 # Ajustar permisos para Laravel
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
