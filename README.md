@@ -1,59 +1,175 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistema de Gestión de Órdenes
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Descripción
+-----------
+Esta es una aplicación web desarrollada en **Laravel 10** diseñada para gestionar el historial de órdenes de trading conectándose con la API de **Bitfinex**. La aplicación demuestra capacidades de integración con servicios externos, seguridad mediante firmas criptográficas y gestión CRUD eficiente.
 
-## About Laravel
+ Funcionalidades clave
+------------------------
+- Autenticación HMAC SHA384: Seguridad avanzada para la comunicación con Bitfinex mediante encabezados firmados (`bfx-signature`, `bfx-nonce`).
+- Sincronización inteligente: Algoritmo que procesa el historial externo y evita duplicados en la base de datos comparando `bitfinex_id`.
+- Arquitectura de servicios: Desacoplamiento de la lógica de negocio mediante `BitfinexService`.
+- Gestión completa (CRUD): Listar, buscar por ID de Bitfinex, editar (`status`, `price`, `amount`) y eliminar registros.
+- Interfaz de usuario: `resources/views/orders.blade.php` como SPA con JavaScript nativo.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+ Requisitos
+-------------
+- PHP >= 8.1
+- Composer
+- MySQL / SQLite (u otra base de datos soportada)
+- Node.js & NPM
+- Git
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+ Instalación
+--------------
+1. Clona el repositorio:
+```bash
+git clone https://github.com/juatnegreteg-crypto/prueba-tecnica-fenix.git
+cd prueba-tecnica-fenix
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+2. Instala dependencias PHP:
+```bash
+composer install
+```
 
-## Learning Laravel
+3. Configura el entorno:
+```bash
+cp .env.example .env
+```
+Edita `.env` y ajusta las credenciales de tu DB y las llaves de Bitfinex proporcionadas en la prueba.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+4. Genera la clave de aplicación:
+```bash
+php artisan key:generate
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+5. Ejecuta migraciones:
+```bash
+php artisan migrate
+```
 
-## Laravel Sponsors
+6. Instala dependencias de frontend y compila (si aplica):
+```bash
+npm install
+npm run dev
+# Para producción:
+npm run build
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+7. Inicia el servidor:
+```bash
+php artisan serve
+```
+Accede a: `http://127.0.0.1:8000`
 
-### Premium Partners
+ Documentación de la API (endpoints)
+--------------------------------------
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+1) Sincronizar historial (Bitfinex -> Local)
+- Método: POST
+- Ruta: `/api/orders/sync`
+- Descripción: Llama a la API de Bitfinex, firma la petición y guarda órdenes nuevas evitando duplicados por `bitfinex_id`.
 
-## Contributing
+Ejemplo cURL:
+```bash
+curl -X POST http://127.0.0.1:8000/api/orders/sync -H "Accept: application/json"
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+2) Listar todas las órdenes
+- Método: GET
+- Ruta: `/api/orders`
 
-## Code of Conduct
+Ejemplo cURL:
+```bash
+curl -X GET http://127.0.0.1:8000/api/orders
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+3) Buscar orden por ID de Bitfinex
+- Método: GET
+- Ruta: `/api/orders/{id_bitfinex}`
 
-## Security Vulnerabilities
+Ejemplo cURL:
+```bash
+curl -X GET http://127.0.0.1:8000/api/orders/123456789
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+4) Actualizar orden
+- Método: PUT
+- Ruta: `/api/orders/{id}`
+- Campos permitidos: `status`, `price`, `amount`
 
-## License
+Ejemplo cURL:
+```bash
+curl -X PUT http://127.0.0.1:8000/api/orders/1 \
+     -H "Content-Type: application/json" \
+     -d '{"status":"CANCELED", "price":"60000.50"}'
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+5) Eliminar orden
+- Método: DELETE
+- Ruta: `/api/orders/{id}`
+
+Ejemplo cURL:
+```bash
+curl -X DELETE http://127.0.0.1:8000/api/orders/1
+```
+
+ Estructura del proyecto (resumen)
+------------------------------------
+- `app/Services/BitfinexService.php` — Lógica central de autenticación HMAC y conexión externa.  
+- `app/Http/Controllers/OrderController.php` — Controlador RESTful para la gestión de la data.  
+- `app/Models/Order.php` — Modelo con asignación masiva protegida.  
+- `resources/views/orders.blade.php` — Interfaz de usuario (Single Page Interface) con JavaScript nativo.  
+- `routes/api.php` — Definición de los endpoints requeridos.  
+- `database/` — Migraciones y seeders.  
+- `public/` — Punto de entrada público (assets, index.php).  
+- `tests/` — Pruebas automatizadas (si aplican).
+
+ Buenas prácticas aplicadas
+-----------------------------
+- Seguridad: Uso de variables de entorno para API Keys (no subir `.env` al repo).  
+- Validación: Manejo de respuestas vacías y errores HTTP de la API externa.  
+- Integridad: Uso de `decimal(18,8)` para precisión financiera en cripto.  
+- Scannability: Código comentado y nombres de métodos descriptivos.  
+- Sincronización: Detección y evitación de duplicados por `bitfinex_id`.
+
+ Notas técnicas destacadas
+----------------------------
+- Autenticación HMAC SHA384: la firma se calcula con la API secret y se envía en el encabezado `bfx-signature`, junto con `bfx-nonce` y `bfx-apikey`.
+- BitfinexService encapsula:
+  - Construcción de payloads y cabeceras firmadas.
+  - Llamadas HTTP a Bitfinex.
+  - Transformación y normalización de la respuesta antes de persistir.
+- La sincronización compara `bitfinex_id` para evitar insertar órdenes duplicadas.
+
+🌐 Despliegue
+-------------
+Se utiliza la plataforma Render para desplegar la aplicacion, se utlizo la base de datos sqlite que proporciona la plataforma.
+El proyecto se encuentra desplegado para pruebas en vivo aquí: 👉 [https://prueba-tecnica-fenix.onrender.com/]
+
+Visuales
+<img width="1121" height="554" alt="image" src="https://github.com/user-attachments/assets/4315e959-c606-430d-9ad9-931ec701b013" />
+<img width="440" height="592" alt="image" src="https://github.com/user-attachments/assets/7c341667-4a0f-48ff-9393-418db0d5d902" />
+<img width="437" height="395" alt="image" src="https://github.com/user-attachments/assets/bc47b190-864b-4eff-811c-a9e3478101c2" />
+# Imagen de Base de datos local MySQl
+<img width="1080" height="330" alt="image" src="https://github.com/user-attachments/assets/7af71e74-07e4-4bcf-acb6-d81d095cc998" />
+
+
+
+Recomendaciones de despliegue:
+```bash
+# Compilar assets
+npm run build
+
+# Optimizar config en Laravel
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+
+
+👨‍💻 Autor
+----------
+- Nombre: juatnegreteg-crypto  
+- Repositorio: https://github.com/juatnegreteg-crypto/prueba-tecnica-fenix
