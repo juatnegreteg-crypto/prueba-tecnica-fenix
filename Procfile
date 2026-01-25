@@ -1,1 +1,1 @@
-web: php artisan migrate --force && apache2-foreground
+web: php artisan migrate --force && vendor/bin/heroku-php-apache2 public/
