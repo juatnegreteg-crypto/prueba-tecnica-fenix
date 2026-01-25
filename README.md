@@ -15,6 +15,7 @@ Esta es una aplicación web desarrollada en **Laravel 10** diseñada para gestio
  Requisitos
 -------------
 - PHP >= 8.1
+- laravel 10 o superior
 - Composer
 - MySQL / SQLite (u otra base de datos soportada)
 - Node.js & NPM
