@@ -144,7 +144,7 @@ curl -X DELETE http://127.0.0.1:8000/api/orders/1
   - Transformación y normalización de la respuesta antes de persistir.
 - La sincronización compara `bitfinex_id` para evitar insertar órdenes duplicadas.
 
-🌐 Despliegue
+# Despliegue
 -------------
 Se utiliza la plataforma Railway para desplegar la aplicacion, se utlizo la base de datos sqlite que proporciona la plataforma.
 El proyecto se encuentra desplegado para pruebas en vivo aquí: 👉 [https://heroic-bravery-production-e473.up.railway.app/]
@@ -167,10 +167,3 @@ npm run build
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
-
-
-
-👨‍💻 Autor
-----------
-- Nombre: juatnegreteg-crypto  
-- Repositorio: https://github.com/juatnegreteg-crypto/prueba-tecnica-fenix
