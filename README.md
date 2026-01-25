@@ -146,7 +146,7 @@ curl -X DELETE http://127.0.0.1:8000/api/orders/1
 🌐 Despliegue
 -------------
 Se utiliza la plataforma Render para desplegar la aplicacion, se utlizo la base de datos sqlite que proporciona la plataforma.
-El proyecto se encuentra desplegado para pruebas en vivo aquí: 👉 [https://prueba-tecnica-fenix.onrender.com/]
+El proyecto se encuentra desplegado para pruebas en vivo aquí: 👉 [https://heroic-bravery-production-e473.up.railway.app/]
 
 Visuales
 <img width="1121" height="554" alt="image" src="https://github.com/user-attachments/assets/4315e959-c606-430d-9ad9-931ec701b013" />
