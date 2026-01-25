@@ -8,10 +8,13 @@ Route::get('/', function () {
 });
 
 Route::get('/check-db', function () {
-    return response()->json([
-        'total_registros' => \App\Models\Order::count(),
-        'datos' => \App\Models\Order::all(),
-        'ubicacion_db' => database_path('database.sqlite'),
-    ], 200, [], JSON_PRETTY_PRINT);
+    $orders = \App\Models\Order::all();
+
+    return view('check-db', [
+        'total' => $orders->count(),
+        'orders' => $orders,
+        'db_path' => database_path('database.sqlite'),
+    ]);
 });
+;
 
