@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Services\BitfinexService;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -65,7 +66,8 @@ public function sync()
         ]);
 
     } catch (\Exception $e) {
-        return response()->json(['error' => 'Error: ' . $e->getMessage()], 500);
+        Log::error('Order sync failed: ' . $e->getMessage());
+        return response()->json(['error' => 'Error al sincronizar órdenes. Por favor, intente nuevamente.'], 500);
     }
 }
 
@@ -76,7 +78,7 @@ public function sync()
 
     public function show($id)
     {
-        $order = Order::where('bitfinex_id', $id)->first();;
+        $order = Order::where('bitfinex_id', $id)->first();
         if (!$order) {
             return response()->json(['error' => 'Orden no encontrada.'], 404);
         }
@@ -99,7 +101,14 @@ public function sync()
         if (!$order) {
             return response()->json(['error' => 'Orden no encontrada.'], 404);
         }
-        $order->update($request->only(['status','price','amount']));
+
+        $validated = $request->validate([
+            'status' => 'sometimes|string|max:50',
+            'price' => 'sometimes|numeric|min:0',
+            'amount' => 'sometimes|numeric'
+        ]);
+
+        $order->update($validated);
         return response()->json(['message' => 'Orden actualizada correctamente.', 'order' => $order]);
     }
 }

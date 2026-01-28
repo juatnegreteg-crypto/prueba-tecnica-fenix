@@ -10,16 +10,27 @@ const fullDetails = document.getElementById('fullDetails');
 const modalTitle = document.getElementById('modalTitle');
 
 async function loadOrders() {
-    const res = await fetch('/api/orders');
-    const orders = await res.json();
-    const body = document.getElementById('ordersTableBody');
+    try {
+        const res = await fetch('/api/orders');
+        
+        if (!res.ok) {
+            throw new Error('Error al cargar órdenes');
+        }
 
-    if (!orders.length) {
-        body.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-gray-500">No hay órdenes guardadas</td></tr>`;
-        return;
+        const orders = await res.json();
+        const body = document.getElementById('ordersTableBody');
+
+        if (!orders.length) {
+            body.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-gray-500">No hay órdenes guardadas</td></tr>`;
+            return;
+        }
+
+        body.innerHTML = orders.map(order => renderOrderRow(order)).join('');
+    } catch (error) {
+        console.error('Error al cargar órdenes:', error);
+        const body = document.getElementById('ordersTableBody');
+        body.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-red-500">Error al cargar órdenes. Por favor, recargue la página.</td></tr>`;
     }
-
-    body.innerHTML = orders.map(order => renderOrderRow(order)).join('');
 }
 
 function renderOrderRow(order) {
@@ -109,51 +120,111 @@ async function syncOrders() {
     btn.disabled = true;
     btn.innerText = 'Sincronizando...';
 
-    const res = await fetch('/api/orders/sync', {
-        method: 'POST',
-        headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' }
-    });
+    try {
+        const res = await fetch('/api/orders/sync', {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' }
+        });
 
-    const data = await res.json();
-    summary.classList.remove('hidden');
-    summary.innerText = `Sincronización: ${data.ordenes_nuevas_guardadas} nuevas, ${data.ordenes_ignoradas} duplicadas`;
-    
-    btn.innerText = '🔄 Sincronizar Bitfinex';
-    btn.disabled = false;
-    loadOrders();
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({ error: 'Error de conexión' }));
+            summary.classList.remove('hidden');
+            summary.className = 'mb-4 p-4 bg-red-100 text-red-700 rounded border border-red-200';
+            summary.innerText = `Error: ${errorData.error || 'No se pudo sincronizar'}`;
+            return;
+        }
+
+        const data = await res.json();
+        summary.classList.remove('hidden');
+        summary.className = 'mb-4 p-4 bg-green-100 text-green-700 rounded border border-green-200';
+        summary.innerText = `Sincronización: ${data.ordenes_nuevas_guardadas} nuevas, ${data.ordenes_ignoradas} duplicadas`;
+        
+        loadOrders();
+    } catch (error) {
+        console.error('Error en sincronización:', error);
+        summary.classList.remove('hidden');
+        summary.className = 'mb-4 p-4 bg-red-100 text-red-700 rounded border border-red-200';
+        summary.innerText = 'Error de conexión. Verifique su conexión a internet.';
+    } finally {
+        btn.innerText = '🔄 Sincronizar Bitfinex';
+        btn.disabled = false;
+    }
 }
 
 async function updateOrder() {
     const id = editId.value;
-    await fetch(`/api/orders/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf },
-        body: JSON.stringify({
-            price: editPrice.value,
-            amount: editAmount.value,
-            status: editStatus.value
-        })
-    });
-    closeModal();
-    loadOrders();
+    try {
+        const res = await fetch(`/api/orders/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf },
+            body: JSON.stringify({
+                price: editPrice.value,
+                amount: editAmount.value,
+                status: editStatus.value
+            })
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({ error: 'Error al actualizar' }));
+            alert('Error: ' + (errorData.error || 'No se pudo actualizar la orden'));
+            return;
+        }
+
+        await res.json();
+        closeModal();
+        loadOrders();
+    } catch (error) {
+        console.error('Error al actualizar orden:', error);
+        alert('Error de conexión. Por favor, intente nuevamente.');
+    }
 }
 
 async function deleteOrder(id) {
     if (!confirm('¿Eliminar esta orden?')) return;
-    await fetch(`/api/orders/${id}`, {
-        method: 'DELETE',
-        headers: { 'X-CSRF-TOKEN': csrf }
-    });
-    loadOrders();
+    
+    try {
+        const res = await fetch(`/api/orders/${id}`, {
+            method: 'DELETE',
+            headers: { 'X-CSRF-TOKEN': csrf }
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({ error: 'Error al eliminar' }));
+            alert('Error: ' + (errorData.error || 'No se pudo eliminar la orden'));
+            return;
+        }
+
+        loadOrders();
+    } catch (error) {
+        console.error('Error al eliminar orden:', error);
+        alert('Error de conexión. Por favor, intente nuevamente.');
+    }
 }
 
 async function searchOrder() {
-    const id = document.getElementById('searchId').value;
-    if (!id) { loadOrders(); return; }
+    const id = document.getElementById('searchId').value.trim();
+    if (!id) { 
+        loadOrders(); 
+        return; 
+    }
+
+    if (isNaN(id) || parseInt(id) < 0) {
+        alert('Por favor, ingrese un ID válido');
+        return;
+    }
 
     try {
         const res = await fetch(`/api/orders/${id}`);
-        if (res.status === 404) { alert("Orden no encontrada"); return; }
+        
+        if (res.status === 404) { 
+            alert("Orden no encontrada"); 
+            return; 
+        }
+
+        if (!res.ok) {
+            alert("Error al buscar la orden");
+            return;
+        }
 
         const order = await res.json();
         const body = document.getElementById('ordersTableBody');
@@ -166,6 +237,7 @@ async function searchOrder() {
             </tr>`;
     } catch (error) {
         console.error("Error al buscar:", error);
+        alert("Error de conexión. Por favor, intente nuevamente.");
     }
 }
 
