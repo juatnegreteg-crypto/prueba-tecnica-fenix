@@ -37,7 +37,6 @@ class BitfinexService
             'bfx-signature' => $signature,
             'Content-Type'  => 'application/json'
         ])
-        ->withoutVerifying()
         ->withBody($body, 'application/json') 
         ->post($this->baseUrl . $endpoint);
 
